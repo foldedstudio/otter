@@ -1,5 +1,5 @@
 # Organisation layer: machine-readable source the sync CLI loads.
-# Mirrors the shape declared in ../otter.harness.yaml under `org` — if the two
+# Mirrors the shape declared in ../docs/otter.harness.yaml under `org` — if the two
 # drift, fix the harness yaml to match this file, which is what the CLI reads.
 
 instructions: AGENTS.md   # prose merged into every product repo's AGENTS.md

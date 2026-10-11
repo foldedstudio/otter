@@ -2,7 +2,7 @@
 
 Otter is a three-layer AI development harness that Claude Code and Codex run inside: **organisation** (`org/`), **stack** (`stacks/<name>/`), and **local** (per product repo). This repo is the harness itself — the source that a sync CLI will merge and write out as each product repo's `AGENTS.md` and Claude Code files.
 
-Full plan: `plans/otter-plan.md` (narrative) and `plans/otter.harness.yaml` (the plan as config — treat this as the spec). Start with `plans/README.md`.
+Full plan: `docs/otter-plan.md` (narrative) and `docs/otter.harness.yaml` (the plan as config — treat this as the spec). Rollout phases, gates, and the agreed decisions log live in `docs/phases/`. Start with `docs/README.md`.
 
 ## Current state
 

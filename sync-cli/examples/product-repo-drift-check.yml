@@ -1,4 +1,4 @@
-# Example CI job for a product repo pinned to Otter (see ../../otter.harness.yaml,
+# Example CI job for a product repo pinned to Otter (see ../../docs/otter.harness.yaml,
 # ci.product_repo_pr: generated-files-in-sync). Copy into the product repo's own
 # .github/workflows/ and adjust the otter ref to match its otter.yaml pin.
 #

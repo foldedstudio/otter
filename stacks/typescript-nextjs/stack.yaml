@@ -1,6 +1,6 @@
 # Stack pack: typescript-nextjs
 # Machine-readable source the sync CLI reads. Mirrors the shape declared in
-# ../../otter.harness.yaml under stacks.typescript-nextjs — if the two drift,
+# ../../docs/otter.harness.yaml under stacks.typescript-nextjs — if the two drift,
 # this file is the one the CLI actually loads; fix the harness yaml to match.
 
 name: typescript-nextjs

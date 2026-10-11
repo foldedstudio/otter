@@ -1,0 +1,30 @@
+# Organisation layer: machine-readable source the sync CLI loads.
+# Mirrors the shape declared in ../otter.harness.yaml under `org` — if the two
+# drift, fix the harness yaml to match this file, which is what the CLI reads.
+
+instructions: AGENTS.md   # prose merged into every product repo's AGENTS.md
+
+guardrails:
+  deny:
+    - production-credentials
+    - destructive-commands
+    - unapproved-network-access
+  require_approval:
+    - dependency-installs
+    - changes-to-ci-config
+    - changes-to-protected-paths
+  protected_paths: []       # org has none itself; stacks and repos add their own
+  tools_allowlist: [claude-code, codex]
+  mcp_servers_allowlist: [] # TODO: add approved servers with pinned versions
+
+guidance:
+  principles:
+    - Conventional commits; small PRs with a clear description
+    - Every change ships with tests or a reason why not
+    - Respect the licence policy; no copyleft deps without approval   # TODO: confirm
+
+skills:
+  - write-adr
+  - open-pr
+  - upgrade-dependency
+  - incident-writeup

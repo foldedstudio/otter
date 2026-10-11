@@ -1,0 +1,12 @@
+{
+  "name": "otter-typescript-nextjs-evals",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "evals": "node run.mjs"
+  },
+  "dependencies": {
+    "yaml": "^2.5.0"
+  }
+}

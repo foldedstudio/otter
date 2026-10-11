@@ -1,0 +1,11 @@
+id: static-list-stays-server
+skill: add-ui-component
+description: A purely presentational component with no interactivity should not be marked "use client" just because it's new.
+prompt: |
+  Add a PricingTable component that renders three static pricing tiers (Basic, Pro, Enterprise) with hardcoded prices, and show it on a new /pricing page.
+checks:
+  - type: file-exists
+    path: app/pricing/page.tsx
+  - type: file-not-contains
+    path: app/pricing/page.tsx
+    pattern: '"use client"'

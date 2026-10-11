@@ -1,0 +1,10 @@
+id: route-error-boundary
+skill: add-page-or-route
+description: A route that fetches data which can fail should get an error.tsx boundary rather than swallowing the error in a try/catch.
+prompt: |
+  Add a route at /reports/latest that fetches a report from an external service (a stub fetch call is fine) and displays it. The external service is known to be flaky, so handle failure the way this stack expects.
+checks:
+  - type: file-exists
+    path: app/reports/latest/page.tsx
+  - type: file-exists
+    path: app/reports/latest/error.tsx

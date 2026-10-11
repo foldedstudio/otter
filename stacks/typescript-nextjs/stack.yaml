@@ -1,0 +1,48 @@
+# Stack pack: typescript-nextjs
+# Machine-readable source the sync CLI reads. Mirrors the shape declared in
+# ../../otter.harness.yaml under stacks.typescript-nextjs — if the two drift,
+# this file is the one the CLI actually loads; fix the harness yaml to match.
+
+name: typescript-nextjs
+owner: TODO              # developer who knows the stack best — unset
+status: pilot
+instructions: AGENTS.md  # prose merged into every product repo's AGENTS.md
+
+commands:
+  install: npm ci
+  build: npm run build
+  lint: npm run lint
+  typecheck: npx tsc --noEmit
+  test: npm test
+
+conventions:
+  - router-choice
+  - server-vs-client-components
+  - folder-layout
+  - data-fetching
+  - error-handling-and-logging
+
+libraries:
+  preferred: []           # TODO: agree the list with the working group
+  banned: []               # each entry: { name, reason }
+
+skills:
+  - add-page-or-route
+  - add-api-route-or-server-action
+  - add-form-with-validation
+  - add-ui-component
+
+templates:
+  - new-nextjs-app
+
+reference_code: []        # TODO: 1-2 exemplary repos or modules
+
+guardrails:
+  protected_paths:
+    - generated/
+    - .env*
+
+evals:
+  path: evals/
+  target_tasks: 15
+  runner: claude-code-headless

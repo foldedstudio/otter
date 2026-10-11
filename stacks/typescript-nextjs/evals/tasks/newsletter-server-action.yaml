@@ -1,0 +1,11 @@
+id: newsletter-server-action
+skill: add-api-route-or-server-action
+description: A form submission consumed only by this app's own UI should be a server action, not a new API route.
+prompt: |
+  Add a newsletter signup form on the home page that takes an email address and, on submit, stores the signup (a stub is fine, e.g. logging it server-side). This is only called from our own UI, nothing external needs to call it.
+checks:
+  - type: file-not-exists
+    path: app/api/newsletter/route.ts
+  - type: file-contains
+    path: app/page.tsx
+    pattern: 'form'

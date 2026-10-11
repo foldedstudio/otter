@@ -1,0 +1,12 @@
+id: interactive-counter-client-component
+skill: add-ui-component
+description: A component that needs useState for interactivity must be marked "use client", with the boundary kept as small as possible.
+prompt: |
+  Add a Counter component with a button that increments a displayed count when clicked, and use it on the home page.
+checks:
+  - type: file-contains
+    path: components/Counter.tsx
+    pattern: '"use client"'
+  - type: file-not-contains
+    path: app/page.tsx
+    pattern: '"use client"'

@@ -6,7 +6,7 @@ Full plan: `docs/otter-plan.md` (narrative) and `docs/otter.harness.yaml` (the p
 
 ## Current state
 
-Phase 1 (Build), in progress. `org/`, `stacks/typescript-nextjs/`, and the sync CLI (`sync-cli/`) are scaffolded, with a drift check running in CI. The `new-nextjs-app` "template" is a recipe pointing at Next.js's own `create-next-app`, not an app we maintain in-repo. Still open, per `otter.harness.yaml`: the stack pack's preferred libraries and reference code (deliberately deferred), and wiring the eval runner into CI.
+Phase 1 (Build), in progress. `org/`, `stacks/typescript-nextjs/`, and the sync CLI (`sync-cli/`) are scaffolded, with a drift check running in CI. The `new-nextjs-app` "template" is a recipe pointing at Next.js's own `create-next-app`, not an app we maintain in-repo. Still open, per `otter.harness.yaml`: the stack pack's preferred libraries and reference code (deliberately deferred), and an `ANTHROPIC_API_KEY` secret so the eval gate in CI actually runs.
 
 ## Tooling
 

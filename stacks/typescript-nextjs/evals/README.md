@@ -29,18 +29,20 @@ Check types: `file-exists`, `file-not-exists`, `file-contains`, `file-not-contai
 
 ## Fixture
 
-`fixtures/base-app/` is a minimal Next.js App Router project — just enough surface (one existing route, one existing lib util, configs) for tasks to act on realistically. Every task runs against a fresh copy of it; tasks never share state.
+`fixtures/base-app/` is a minimal Next.js App Router project with an `otter.yaml` manifest — just enough surface (one existing route, one existing lib util, configs) for tasks to act on realistically. Every task runs against a fresh copy of it; tasks never share state.
 
 ## Running
 
 ```
-node run.mjs                  # all tasks, against the current harness version
-node run.mjs add-ui-component # a single task, by id
+node run.mjs                              # all tasks, against this checkout's harness
+node run.mjs add-ui-component             # a single task, by id
+node run.mjs --harness <path> --json out.json  # another harness checkout; write a report
+node compare.mjs current.json candidate.json   # exit 1 if candidate passes fewer tasks
 ```
 
-The runner copies the fixture to a temp directory per task, runs `claude -p` with the task's prompt and `--permission-mode acceptEdits`, then evaluates `checks` against the result. It installs dependencies (`pnpm install`) in the temp copy once, lazily, only if a task's checks include a `command` check — static tasks skip that cost.
+Needs `sync-cli/` installed (`pnpm install` there) and `claude` on the PATH. The runner copies the fixture to a temp directory per task, syncs the harness under test into it with `otter-sync sync` (so the agent sees Otter's merged `AGENTS.md`, settings and skills — that's what's being evaluated), runs `claude -p` with the task's prompt and `--permission-mode acceptEdits`, then evaluates `checks` against the result. It installs dependencies (`pnpm install`) in the temp copy once, lazily, only if a task's checks include a `command` check — static tasks skip that cost.
 
-Exit code is non-zero if any task fails, so this can run as a CI gate: `otter_release.evals-compare-current-vs-candidate` in `otter.harness.yaml` runs this against both the current and candidate harness versions and blocks release if success drops.
+Exit code is non-zero if any task fails. The release gate (`otter_release.evals-compare-current-vs-candidate` / `block-if-eval-success-drops` in `otter.harness.yaml`) is `.github/workflows/evals.yml`: on PRs touching `org/`, `stacks/`, or `sync-cli/src/`, it runs this PR's tasks against the base branch's harness and this PR's harness, then fails via `compare.mjs` if the candidate passes fewer. It needs an `ANTHROPIC_API_KEY` repo secret and skips with a warning without one. Results from LLM runs are noisy, so a single-task swing can fail the gate — rerun before digging in.
 
 ## Adding a task
 

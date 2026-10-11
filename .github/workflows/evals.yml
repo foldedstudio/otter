@@ -1,0 +1,80 @@
+name: evals
+
+# Release gate from otter.harness.yaml (`ci.otter_release`):
+# evals-compare-current-vs-candidate + block-if-eval-success-drops.
+# Runs this PR's eval tasks against the base branch's harness (current) and
+# this PR's harness (candidate), and fails if the candidate passes fewer.
+# Each run makes real Claude Code calls, so it only triggers on changes that
+# can move the result.
+
+on:
+  pull_request:
+    paths:
+      - org/**
+      - stacks/**
+      - sync-cli/src/**
+      - .github/workflows/evals.yml
+
+jobs:
+  typescript-nextjs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      EVALS: candidate/stacks/typescript-nextjs/evals
+    steps:
+      - name: Skip when no API key is configured
+        if: env.ANTHROPIC_API_KEY == ''
+        run: echo "::warning::ANTHROPIC_API_KEY secret not set — eval gate skipped. Add it in repo settings to enforce this gate."
+
+      - uses: actions/checkout@v4
+        if: env.ANTHROPIC_API_KEY != ''
+        with:
+          path: candidate
+      - uses: actions/checkout@v4
+        if: env.ANTHROPIC_API_KEY != ''
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: current
+
+      - uses: jdx/mise-action@v5
+        if: env.ANTHROPIC_API_KEY != ''
+        with:
+          working_directory: candidate
+
+      - name: Install sync CLI, eval runner, and Claude Code
+        if: env.ANTHROPIC_API_KEY != ''
+        run: |
+          (cd candidate/sync-cli && pnpm install --frozen-lockfile)
+          (cd "$EVALS" && pnpm install --frozen-lockfile)
+          curl -fsSL https://claude.ai/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      # Both runs use this PR's tasks and sync CLI; only the harness layers
+      # (org/, stacks/) differ. run.mjs exits non-zero on any failing task,
+      # which isn't itself the gate — compare.mjs is.
+      - name: Evals against current harness (base branch)
+        id: current
+        if: env.ANTHROPIC_API_KEY != ''
+        run: |
+          if [ ! -d current/stacks/typescript-nextjs ]; then
+            echo "Base branch has no typescript-nextjs stack pack yet — nothing to compare against."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          node "$EVALS/run.mjs" --harness current --json "$RUNNER_TEMP/current.json" || true
+
+      - name: Evals against candidate harness (this PR)
+        if: env.ANTHROPIC_API_KEY != ''
+        run: node "$EVALS/run.mjs" --harness candidate --json "$RUNNER_TEMP/candidate.json" || true
+
+      - name: Block if eval success drops
+        if: env.ANTHROPIC_API_KEY != '' && steps.current.outputs.skip != 'true'
+        run: node "$EVALS/compare.mjs" "$RUNNER_TEMP/current.json" "$RUNNER_TEMP/candidate.json"
+
+      - uses: actions/upload-artifact@v4
+        if: always() && env.ANTHROPIC_API_KEY != ''
+        with:
+          name: eval-reports
+          path: ${{ runner.temp }}/*.json
+          if-no-files-found: ignore

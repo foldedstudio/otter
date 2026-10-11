@@ -1,0 +1,193 @@
+# Otter — AI development harness
+# Root config for the `otter` repo. Defines the organisation and stack layers,
+# what the sync CLI generates, CI checks, and the rollout plan.
+# Product repos join Otter with their own `otter.yaml` (example at the bottom).
+#
+# Values marked TODO need confirming before Phase 1 ends.
+
+version: 1
+name: otter
+release: v0.1.0
+owner: anthony            # harness lead; approves guardrail changes
+working_group: all-developers
+
+tools:
+  supported: [claude-code, codex]
+  eval_reference: claude-code      # eval suites run headless through Claude Code
+  outputs:
+    - id: agents-md
+      path: AGENTS.md              # shared core, read by Codex and other agents
+    - id: claude-code
+      paths: [CLAUDE.md, .claude/settings.json, .claude/skills/]
+
+precedence:
+  load_order: [org, stack, repo, developer]
+  guardrails: strictest-wins       # a deny at any layer is a deny everywhere
+  guidance: most-specific-wins     # repo > stack > org
+  skills: merged-namespaced        # e.g. org:open-pr, stack:add-route
+
+# ---------------------------------------------------------------------------
+# Layer 1 — Organisation  (folder: org/)
+# ---------------------------------------------------------------------------
+org:
+  path: org/
+  instructions: org/AGENTS.md      # keep under the size limit below
+  max_instruction_lines: 150
+
+  guardrails:
+    data:
+      providers_require_no_training_terms: true
+      subscription_check: [onboarding, quarterly]
+      never_send: [secrets, production-credentials, .env files, customer-data]
+    secrets:
+      scanning: [pre-commit, ci]
+    tools:
+      allowlist: [claude-code, codex]
+      mcp_servers: []              # TODO: add approved servers with pinned versions
+    permissions:
+      deny:
+        - production-credentials
+        - destructive-commands     # e.g. rm -rf, git push --force, DROP TABLE
+        - unapproved-network-access
+      require_approval:
+        - dependency-installs
+        - changes-to-ci-config
+        - changes-to-protected-paths
+      codex:
+        sandbox: workspace-write   # TODO: confirm against current Codex config
+        approval: on-request
+    ci_reviewer:
+      access: read-only            # comment on PRs; never push, approve or merge
+
+  guidance:
+    principles:
+      - Conventional commits; small PRs with a clear description
+      - Every change ships with tests or a reason why not
+      - Respect the licence policy; no copyleft deps without approval   # TODO: confirm
+    skills:
+      - write-adr
+      - open-pr
+      - upgrade-dependency
+      - incident-writeup
+
+  usage_visibility:
+    source: developer-subscriptions   # each developer's own usage page
+    gateway: revisit-in-phase-3
+
+# ---------------------------------------------------------------------------
+# Layer 2 — Stacks  (folder: stacks/<name>/)
+# ---------------------------------------------------------------------------
+stacks:
+  typescript-nextjs:
+    path: stacks/typescript-nextjs/
+    owner: TODO                    # developer who knows the stack best
+    status: pilot
+    commands:                      # TODO: confirm package manager and scripts
+      install: npm ci
+      build: npm run build
+      lint: npm run lint
+      typecheck: npx tsc --noEmit
+      test: npm test
+    conventions:                   # TODO: fill in each file under conventions/
+      - router-choice
+      - server-vs-client-components
+      - folder-layout
+      - data-fetching
+      - error-handling-and-logging
+    libraries:
+      preferred: []                # TODO
+      banned: []                   # each entry: { name, reason }
+    skills:
+      - add-page-or-route
+      - add-api-route-or-server-action
+      - add-form-with-validation
+      - add-ui-component
+    templates:
+      - new-nextjs-app
+    reference_code: []             # TODO: 1–2 exemplary repos or modules
+    guardrails:
+      protected_paths: [generated/, .env*]
+    evals:
+      path: stacks/typescript-nextjs/evals/
+      target_tasks: 15             # 10–15 tasks with known-good outcomes
+      runner: claude-code-headless
+
+# ---------------------------------------------------------------------------
+# Verification
+# ---------------------------------------------------------------------------
+ci:
+  product_repo_pr:
+    - manifest-valid-and-pinned    # released version, not a branch
+    - generated-files-in-sync
+    - secret-scan
+    - licence-and-dependency-allowlist
+    - stack-commands-pass          # build, lint, typecheck, test
+    - ci-reviewer-comments
+    - ai-assisted-label-and-human-approval
+  otter_release:
+    - evals-compare-current-vs-candidate
+    - block-if-eval-success-drops
+    - guardrail-changes-need: owner
+    - guidance-changes-need: any-working-group-member
+
+governance:
+  review: fortnightly, 20 minutes in an existing team meeting
+  inputs: [eval-results, rework-on-ai-prs, incidents]
+  incidents: every agent-caused incident adds a guardrail or eval task
+
+metrics:
+  primary: ai-prs-merged-without-major-rework   # at or better than baseline
+  supporting:
+    - change-failure-rate-on-ai-changes
+    - eval-task-success-per-release
+    - repos-on-current-otter-version
+    - guardrail-violations-caught-and-reaching-main
+
+# ---------------------------------------------------------------------------
+# Rollout (weeks from kickoff)
+# ---------------------------------------------------------------------------
+rollout:
+  - phase: 0-decide
+    weeks: "1"
+    deliverables:
+      - Confirm every developer's subscription has no-training terms
+      - Pick two TypeScript/Next.js pilot repos
+      - Baseline rework rate and change failure rate from recent PRs
+    gate: Subscriptions checked; baselines recorded
+  - phase: 1-build
+    weeks: "1-3"
+    deliverables:
+      - otter repo with org/ and stacks/typescript-nextjs/
+      - Sync CLI writing Claude Code files and AGENTS.md
+      - 10–15 eval tasks running headless through Claude Code in CI
+    gate: Sync output passes CI on both pilots; eval suite runs green
+  - phase: 2-pilot
+    weeks: "3-4"
+    deliverables:
+      - Both pilot repos on Otter for daily work
+      - CI reviewer agent commenting on every pilot PR
+      - Fix gaps in the stack pack as they come up
+    gate: Rework on AI-assisted PRs at or below baseline
+  - phase: 3-roll-out
+    weeks: "5-6"
+    deliverables:
+      - All active TypeScript/Next.js repos pinned to Otter
+      - Repo template and automated pin-upgrade PRs
+      - Decide whether a model gateway is worth adding
+    gate: Every active repo pinned; no guardrail breach has reached main
+  - phase: 4-operate
+    weeks: "7+"
+    deliverables:
+      - Fortnightly review in an existing team meeting
+      - Every incident and repeated review comment becomes an eval task
+      - Add a stack when a repo on another language needs it
+
+# ---------------------------------------------------------------------------
+# Example: otter.yaml in a product repo (copy, don't uncomment here)
+# ---------------------------------------------------------------------------
+# otter: v0.1.0
+# stack: typescript-nextjs
+# local:
+#   instructions: docs/agent/
+#   protected_paths: [generated/, .env*]
+# tools: [claude-code, codex]

@@ -4,7 +4,7 @@
 # this file is the one the CLI actually loads; fix the harness yaml to match.
 
 name: typescript-nextjs
-owner: TODO              # developer who knows the stack best — unset
+owner: anthony           # developer who knows the stack best
 status: pilot
 instructions: AGENTS.md  # prose merged into every product repo's AGENTS.md
 
@@ -36,7 +36,13 @@ conventions:
 
 libraries:
   preferred: []           # TODO: agree the list with the working group
-  banned: []               # each entry: { name, reason }
+  # Enforced by `otter-sync check`: a repo listing one of these in package.json
+  # dependencies or devDependencies fails the check.
+  banned:
+    - name: moment
+      reason: In maintenance mode; use date-fns or native Intl/Temporal
+    - name: lodash
+      reason: Mostly redundant with modern JS; write the one-liner or import a focused package
 
 skills:
   - add-page-or-route

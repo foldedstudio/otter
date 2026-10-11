@@ -9,7 +9,7 @@ otter-sync sync  --repo <product-repo-path> --harness <otter-repo-path>
 otter-sync check --repo <product-repo-path> --harness <otter-repo-path>
 ```
 
-Both default `--repo` and `--harness` to the current directory. `sync` writes `AGENTS.md`, a `CLAUDE.md` symlink to it, and `.claude/settings.json` + `.claude/skills/`. `check` compares those files against what a fresh sync would produce, **and** validates the stack's required tooling (lockfile, version-manager config, `packageManager` field — see `tooling` in `stack.yaml`), exiting non-zero if either is off. That's the drift check CI runs on every pull request.
+Both default `--repo` and `--harness` to the current directory. `sync` writes `AGENTS.md`, a `CLAUDE.md` symlink to it, and `.claude/settings.json` + `.claude/skills/`. `check` compares those files against what a fresh sync would produce, **and** validates the stack's required tooling (lockfile, version-manager config, `packageManager` field — see `tooling` in `stack.yaml`) and that `package.json` doesn't depend on any of the stack's `libraries.banned`, exiting non-zero if either is off. That's the drift check CI runs on every pull request.
 
 ## What it does and doesn't merge
 

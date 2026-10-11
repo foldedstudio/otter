@@ -94,3 +94,17 @@ export function checkToolingCompliance(merged, { repoPath }) {
 
   return diffs;
 }
+
+// Enforces stack.yaml's `libraries.banned` list against the repo's
+// package.json, so a banned library is a failing check, not just advice.
+export function checkBannedLibraries(merged, { repoPath }) {
+  const banned = merged.libraries?.banned ?? [];
+  const pkgPath = path.join(repoPath, "package.json");
+  if (banned.length === 0 || !existsSync(pkgPath)) return [];
+
+  const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
+  const declared = { ...pkg.dependencies, ...pkg.devDependencies };
+  return banned
+    .filter(({ name }) => name in declared)
+    .map(({ name, reason }) => ({ path: "package.json", reason: `banned library "${name}" — ${reason}` }));
+}

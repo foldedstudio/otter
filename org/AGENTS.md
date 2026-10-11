@@ -13,13 +13,13 @@ This is the floor every agent stands on, regardless of stack or repo. It is merg
 **Tools**
 
 - Only `claude-code` and `codex` are approved agent tools.
-- Only MCP servers on the allowlist may be used, each with a pinned version. The allowlist is currently empty — treat "no server approved" as the default, not an oversight.
+- Only MCP servers on the allowlist in `org.yaml` may be used, at the pinned version: the GitHub MCP server (`ghcr.io/github/github-mcp-server`) and Playwright MCP (`@playwright/mcp`). Anything else is unapproved until it's added there.
 
 **Permissions**
 
 - Always denied, at every layer: production credentials, destructive commands (`rm -rf`, `git push --force`, `DROP TABLE` and equivalents), unapproved network access.
 - Require explicit approval: installing a new dependency, changing CI config, changing a protected path.
-- Codex sandbox and approval mode: see `otter.harness.yaml` (`org.guardrails.permissions.codex`) — still marked `TODO`, don't assume a value.
+- Codex runs with `sandbox_mode = "workspace-write"` and `approval_policy = "on-request"`. Lower layers may tighten these, never loosen them.
 
 **CI reviewer agents**
 
@@ -29,7 +29,7 @@ This is the floor every agent stands on, regardless of stack or repo. It is merg
 
 - Conventional commits; small PRs with a clear description.
 - Every change ships with tests, or a stated reason why not.
-- Respect the licence policy once it's confirmed (currently `TODO` in `otter.harness.yaml`) — don't pull in copyleft dependencies on the assumption it'll be fine.
+- No copyleft dependencies (GPL, AGPL, LGPL and similar) without explicit approval — it's case by case, not an outright ban, so ask rather than assume either way.
 
 ## Shared skills
 

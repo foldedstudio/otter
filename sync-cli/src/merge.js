@@ -64,5 +64,6 @@ export function merge({ org, stack, repo }) {
     skills: mergeSkills(org, stack, repo),
     commands: stack.commands ?? {},
     tooling: stack.tooling ?? null,
+    libraries: stack.libraries ?? { preferred: [], banned: [] },
   };
 }

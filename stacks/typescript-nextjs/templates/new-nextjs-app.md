@@ -11,6 +11,6 @@ Next.js is its own build tool (Turbopack/webpack), not Vite, so there's no Vite 
 3. Add a `.mise.toml` pinning `node` (and `pnpm`, if not using Corepack) — see `../conventions/package-manager.md`.
 4. Run `otter-sync check` (or `sync`, for a fresh repo) to confirm the result is otter-compliant before the first commit.
 
-## Still TODO
+## Libraries
 
-Preferred/banned libraries and reference code are still unset in `stack.yaml` — don't bake in a choice here (e.g. a CSS framework, a data-fetching library) ahead of the working group agreeing on it.
+Don't add the libraries `stack.yaml` bans (`moment`, `lodash`), and don't bake in a choice the stack hasn't agreed on yet (e.g. a CSS framework, a data-fetching library) — the preferred list and reference code are still unset.

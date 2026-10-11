@@ -20,7 +20,7 @@ See `skills/`: `add-page-or-route`, `add-api-route-or-server-action`, `add-form-
 
 ## Libraries
 
-Preferred and banned libraries are still `TODO` in `stack.yaml` — don't assume a package is approved just because it's common; check there first.
+Banned (and `otter-sync check` fails on them): `moment` — use `date-fns` or native `Intl`; `lodash` — modern JS covers most of it. No preferred list is agreed yet, so adding any new dependency still needs approval; see `libraries` in `stack.yaml`.
 
 ## Stack guardrails
 

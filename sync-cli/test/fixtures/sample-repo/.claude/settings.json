@@ -40,7 +40,20 @@
         "claude-code",
         "codex"
       ],
-      "mcp_servers_allowlist": []
+      "mcp_servers_allowlist": [
+        {
+          "name": "github",
+          "source": "ghcr.io/github/github-mcp-server",
+          "version": "v2.0.2",
+          "purpose": "PR and issue access for local dev and read-only CI reviewer agents"
+        },
+        {
+          "name": "playwright",
+          "source": "@playwright/mcp",
+          "version": "0.0.83",
+          "purpose": "browser-driven UI verification (typescript-nextjs)"
+        }
+      ]
     }
   }
 }

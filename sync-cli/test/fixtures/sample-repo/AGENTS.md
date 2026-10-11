@@ -58,13 +58,17 @@ Available to every agent regardless of stack, in `org/skills/`:
 
 Guidance for TypeScript + Next.js, on top of the organisation layer. Full detail lives one level down — this file is what gets merged into a product repo's `AGENTS.md`; don't duplicate the detail here.
 
+## Tooling
+
+**mise** pins the Node version; **pnpm** is the only package manager — never `npm` or `yarn`. See `conventions/package-manager.md`; this is enforced, not just advised.
+
 ## Commands
 
-Install `npm ci`, build `npm run build`, lint `npm run lint`, typecheck `npx tsc --noEmit`, test `npm test`. Verify your own work with these before opening a PR — they're what CI runs.
+Install `pnpm install --frozen-lockfile`, build `pnpm run build`, lint `pnpm run lint`, typecheck `pnpm run typecheck`, test `pnpm test`. Verify your own work with these before opening a PR — they're what CI runs.
 
 ## Conventions
 
-See `conventions/`: router choice, server vs client components, folder layout, data fetching, error handling and logging. Each is short by design; read the one relevant to what you're touching.
+See `conventions/`: package manager and tooling, router choice, server vs client components, folder layout, data fetching, error handling and logging. Each is short by design; read the one relevant to what you're touching.
 
 ## Skills
 

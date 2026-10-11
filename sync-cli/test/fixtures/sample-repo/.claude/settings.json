@@ -3,11 +3,14 @@
     "deny": [
       "Bash(rm -rf *)",
       "Bash(git push --force*)",
-      "Bash(git reset --hard*)"
+      "Bash(git reset --hard*)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(yarn *)"
     ],
     "ask": [
-      "Bash(npm install*)",
-      "Bash(npm ci*)",
+      "Bash(pnpm install*)",
+      "Bash(pnpm add*)",
       "Edit(.github/workflows/**)",
       "Write(.github/workflows/**)",
       "Edit(generated/**)",
@@ -21,7 +24,8 @@
       "deny": [
         "production-credentials",
         "destructive-commands",
-        "unapproved-network-access"
+        "unapproved-network-access",
+        "non-pnpm-package-manager"
       ],
       "require_approval": [
         "dependency-installs",

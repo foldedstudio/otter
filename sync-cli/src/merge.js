@@ -63,5 +63,6 @@ export function merge({ org, stack, repo }) {
     guardrails: mergeGuardrails(org, stack, repo),
     skills: mergeSkills(org, stack, repo),
     commands: stack.commands ?? {},
+    tooling: stack.tooling ?? null,
   };
 }

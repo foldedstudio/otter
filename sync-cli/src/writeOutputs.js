@@ -15,9 +15,13 @@ const GENERATED_HEADER = (otterVersion, stackName) => `<!--
 // expressed as a tool pattern and need a different control.
 const DENY_PATTERNS = {
   "destructive-commands": ["Bash(rm -rf *)", "Bash(git push --force*)", "Bash(git reset --hard*)"],
+  // Stack-level guardrail (see stacks/typescript-nextjs/stack.yaml): this
+  // stack requires pnpm, so npm/npx/yarn are denied outright rather than
+  // just discouraged in prose.
+  "non-pnpm-package-manager": ["Bash(npm *)", "Bash(npx *)", "Bash(yarn *)"],
 };
 const ASK_PATTERNS = {
-  "dependency-installs": ["Bash(npm install*)", "Bash(npm ci*)"],
+  "dependency-installs": ["Bash(pnpm install*)", "Bash(pnpm add*)"],
   "changes-to-ci-config": ["Edit(.github/workflows/**)", "Write(.github/workflows/**)"],
 };
 

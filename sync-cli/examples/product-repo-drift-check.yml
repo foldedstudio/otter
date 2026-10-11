@@ -4,7 +4,9 @@
 #
 # Fails the PR if AGENTS.md, CLAUDE.md, or .claude/ don't match a fresh sync —
 # i.e. someone hand-edited generated output instead of editing the layer it
-# came from.
+# came from — or if the repo is missing the stack's required tooling (for
+# typescript-nextjs: a .mise.toml, a pnpm-lock.yaml, and a packageManager
+# field pinning pnpm — see stacks/typescript-nextjs/conventions/package-manager.md).
 
 name: otter-drift-check
 
@@ -24,11 +26,11 @@ jobs:
           ref: v0.1.0 # keep in sync with this repo's otter.yaml `otter:` field
           path: .otter-harness
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
+      # Reads *this* repo's own .mise.toml — the stack requires one, so this
+      # also doubles as a smoke test that it's present and valid.
+      - uses: jdx/mise-action@v5
 
-      - run: npm install --no-audit --no-fund
+      - run: pnpm install --frozen-lockfile
         working-directory: .otter-harness/sync-cli
 
       - run: |

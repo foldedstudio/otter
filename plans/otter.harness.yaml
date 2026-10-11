@@ -82,13 +82,20 @@ stacks:
     path: stacks/typescript-nextjs/
     owner: TODO                    # developer who knows the stack best
     status: pilot
-    commands:                      # TODO: confirm package manager and scripts
-      install: npm ci
-      build: npm run build
-      lint: npm run lint
-      typecheck: npx tsc --noEmit
-      test: npm test
+    commands:
+      install: pnpm install --frozen-lockfile
+      build: pnpm run build
+      lint: pnpm run lint
+      typecheck: pnpm run typecheck
+      test: pnpm test
+    tooling:                       # enforced by otter-sync check, not just advisory
+      version_manager: mise
+      version_manager_config: .mise.toml
+      package_manager: pnpm
+      lockfile: pnpm-lock.yaml
+      forbidden_lockfiles: [package-lock.json, yarn.lock]
     conventions:                   # TODO: fill in each file under conventions/
+      - package-manager
       - router-choice
       - server-vs-client-components
       - folder-layout
@@ -107,6 +114,7 @@ stacks:
     reference_code: []             # TODO: 1–2 exemplary repos or modules
     guardrails:
       protected_paths: [generated/, .env*]
+      deny: [non-pnpm-package-manager]
     evals:
       path: stacks/typescript-nextjs/evals/
       target_tasks: 15             # 10–15 tasks with known-good outcomes

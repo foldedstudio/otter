@@ -7,6 +7,6 @@ checks:
   - type: file-exists
     path: app/status/page.tsx
   - type: command
-    run: npm run lint
+    run: pnpm run lint
   - type: command
-    run: npm run typecheck
+    run: pnpm run typecheck

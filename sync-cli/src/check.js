@@ -49,3 +49,48 @@ export function checkDrift(merged, { repoPath, otterVersion, stackName }) {
 
   return diffs;
 }
+
+// Enforces a stack's required dev tooling (stack.yaml's `tooling` block),
+// not just the generated files above. A stack can be in sync on AGENTS.md
+// etc. and still be missing the lockfile/version-manager config it requires,
+// so this is checked separately and reported alongside drift.
+export function checkToolingCompliance(merged, { repoPath }) {
+  const tooling = merged.tooling;
+  if (!tooling) return [];
+  const diffs = [];
+
+  if (tooling.version_manager_config && !existsSync(path.join(repoPath, tooling.version_manager_config))) {
+    diffs.push({
+      path: tooling.version_manager_config,
+      reason: `required by this stack's tooling policy (${tooling.version_manager})`,
+    });
+  }
+
+  if (tooling.lockfile && !existsSync(path.join(repoPath, tooling.lockfile))) {
+    diffs.push({ path: tooling.lockfile, reason: `required lockfile for ${tooling.package_manager} is missing` });
+  }
+
+  for (const forbidden of tooling.forbidden_lockfiles ?? []) {
+    if (existsSync(path.join(repoPath, forbidden))) {
+      diffs.push({
+        path: forbidden,
+        reason: `forbidden — this stack requires ${tooling.package_manager}, not the package manager that produced this lockfile`,
+      });
+    }
+  }
+
+  if (tooling.package_manager) {
+    const pkgPath = path.join(repoPath, "package.json");
+    if (existsSync(pkgPath)) {
+      const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
+      if (!pkg.packageManager?.startsWith(`${tooling.package_manager}@`)) {
+        diffs.push({
+          path: "package.json",
+          reason: `"packageManager" field must pin ${tooling.package_manager}@<version>`,
+        });
+      }
+    }
+  }
+
+  return diffs;
+}

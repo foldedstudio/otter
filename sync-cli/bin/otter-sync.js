@@ -5,7 +5,7 @@ import { parse as parseYaml } from "yaml";
 import { loadOrgLayer, loadStackLayer, loadRepoLayer } from "../src/loadLayers.js";
 import { merge } from "../src/merge.js";
 import { writeOutputs } from "../src/writeOutputs.js";
-import { checkDrift } from "../src/check.js";
+import { checkDrift, checkToolingCompliance } from "../src/check.js";
 
 function usage() {
   console.error(
@@ -17,7 +17,9 @@ function usage() {
       "",
       "Reads <repo>/otter.yaml to resolve the pinned otter version and stack,",
       "then writes AGENTS.md, CLAUDE.md, and .claude/settings.json + skills/",
-      "(sync) or reports whether those files are out of date (check).",
+      "(sync), or reports whether those files are out of date or the repo is",
+      "missing the stack's required tooling — lockfile, version manager",
+      "config, packageManager field (check).",
     ].join("\n"),
   );
 }
@@ -62,7 +64,7 @@ function run() {
     return;
   }
 
-  const diffs = checkDrift(merged, ctx);
+  const diffs = [...checkDrift(merged, ctx), ...checkToolingCompliance(merged, ctx)];
   if (diffs.length === 0) {
     console.log("In sync — committed files match a fresh sync.");
     return;

@@ -1,0 +1,5 @@
+{
+  "name": "sample-repo",
+  "private": true,
+  "packageManager": "pnpm@10.7.1"
+}

@@ -6,15 +6,11 @@ Full plan: `plans/otter-plan.md` (narrative) and `plans/otter.harness.yaml` (the
 
 ## Current state
 
-Phase 1 (Build), pre-code. Only `plans/` exists so far. Still to scaffold, per `otter.harness.yaml`:
+Phase 1 (Build), in progress. `org/`, `stacks/typescript-nextjs/`, and the sync CLI (`sync-cli/`) are scaffolded, with a drift check running in CI. Still open, per `otter.harness.yaml`: the stack pack's `TODO`s (owner, approved libraries, reference code), the `new-nextjs-app` template, and wiring the eval runner into CI.
 
-- `org/` — guardrails, permission defaults, shared skills, `org/AGENTS.md` (capped at 150 lines)
-- `stacks/typescript-nextjs/` — commands, conventions, approved libraries, skills, templates, evals
-- The sync CLI — reads a product repo's `otter.yaml`, merges org → stack → repo → developer by precedence, writes `AGENTS.md` and the Claude Code files
-- A drift check so CI fails when committed agent files differ from a fresh sync
-- The first 10–15 eval tasks, run headless through Claude Code in CI
+## Tooling
 
-There is no build, lint, or test command yet — don't invent one. Check `package.json`/`otter.harness.yaml` before assuming tooling exists.
+This repo (and every repo on the `typescript-nextjs` stack) uses **mise** to pin Node and **pnpm** as the package manager — never `npm`/`npx`/`yarn`. Run `mise install` once per machine, then work from `sync-cli/` or `stacks/typescript-nextjs/evals/` with `pnpm install` / `pnpm test`, each of which has its own `package.json`. There's no root-level build — don't invent one.
 
 ## Working in this repo
 

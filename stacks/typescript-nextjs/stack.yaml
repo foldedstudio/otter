@@ -9,13 +9,25 @@ status: pilot
 instructions: AGENTS.md  # prose merged into every product repo's AGENTS.md
 
 commands:
-  install: npm ci
-  build: npm run build
-  lint: npm run lint
-  typecheck: npx tsc --noEmit
-  test: npm test
+  install: pnpm install --frozen-lockfile
+  build: pnpm run build
+  lint: pnpm run lint
+  typecheck: pnpm run typecheck
+  test: pnpm test
+
+# Required dev tooling for this stack. Enforced two ways: `otter-sync check`
+# fails a repo missing any of these (see sync-cli/src/check.js), and the
+# generated .claude/settings.json denies Bash(npm *)/Bash(npx *)/Bash(yarn *)
+# via the non-pnpm-package-manager guardrail below.
+tooling:
+  version_manager: mise
+  version_manager_config: .mise.toml
+  package_manager: pnpm
+  lockfile: pnpm-lock.yaml
+  forbidden_lockfiles: [package-lock.json, yarn.lock]
 
 conventions:
+  - package-manager
   - router-choice
   - server-vs-client-components
   - folder-layout
@@ -41,6 +53,8 @@ guardrails:
   protected_paths:
     - generated/
     - .env*
+  deny:
+    - non-pnpm-package-manager
 
 evals:
   path: evals/

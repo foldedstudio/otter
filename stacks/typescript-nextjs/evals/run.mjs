@@ -31,9 +31,9 @@ for (const file of taskFiles) {
   const workdir = mkdtempSync(path.join(tmpdir(), `otter-eval-${task.id}-`));
   cpSync(fixtureDir, workdir, { recursive: true });
 
-  const needsNpm = task.checks.some((c) => c.type === "command");
-  if (needsNpm) {
-    execFileSync("npm", ["install", "--no-audit", "--no-fund", "--silent"], {
+  const needsInstall = task.checks.some((c) => c.type === "command");
+  if (needsInstall) {
+    execFileSync("pnpm", ["install", "--silent"], {
       cwd: workdir,
       stdio: "inherit",
     });

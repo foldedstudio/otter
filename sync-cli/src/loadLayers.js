@@ -42,6 +42,7 @@ export function loadStackLayer(harnessPath, stackName) {
     name: stackName,
     instructions: readIfExists(path.join(dir, config.instructions ?? "AGENTS.md")),
     commands: config.commands ?? {},
+    tooling: config.tooling ?? null,
     guardrails: {
       deny: config.guardrails?.deny ?? [],
       require_approval: config.guardrails?.require_approval ?? [],

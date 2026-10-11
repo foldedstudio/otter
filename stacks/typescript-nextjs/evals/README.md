@@ -22,7 +22,7 @@ checks:
     path: app/example/page.tsx
     pattern: '"use client"'
   - type: command             # only run if the fixture's deps are installed
-    run: npm run lint
+    run: pnpm run lint
 ```
 
 Check types: `file-exists`, `file-not-exists`, `file-contains`, `file-not-contains` (pattern is a JS regex, tested per-file), `command` (must exit 0).
@@ -38,7 +38,7 @@ node run.mjs                  # all tasks, against the current harness version
 node run.mjs add-ui-component # a single task, by id
 ```
 
-The runner copies the fixture to a temp directory per task, runs `claude -p` with the task's prompt and `--permission-mode acceptEdits`, then evaluates `checks` against the result. It installs dependencies (`npm ci`) in the temp copy once, lazily, only if a task's checks include a `command` check — static tasks skip that cost.
+The runner copies the fixture to a temp directory per task, runs `claude -p` with the task's prompt and `--permission-mode acceptEdits`, then evaluates `checks` against the result. It installs dependencies (`pnpm install`) in the temp copy once, lazily, only if a task's checks include a `command` check — static tasks skip that cost.
 
 Exit code is non-zero if any task fails, so this can run as a CI gate: `otter_release.evals-compare-current-vs-candidate` in `otter.harness.yaml` runs this against both the current and candidate harness versions and blocks release if success drops.
 

@@ -109,8 +109,8 @@ stacks:
       - add-api-route-or-server-action
       - add-form-with-validation
       - add-ui-component
-    templates:
-      - new-nextjs-app
+    templates:                     # recipes pointing at each framework's own
+      - new-nextjs-app              # official scaffold (create-next-app), not an in-repo app we maintain
     reference_code: []             # TODO: 1–2 exemplary repos or modules
     guardrails:
       protected_paths: [generated/, .env*]

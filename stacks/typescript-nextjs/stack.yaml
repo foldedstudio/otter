@@ -45,6 +45,9 @@ skills:
   - add-ui-component
 
 templates:
+  # Not an in-repo scaffold — templates/new-nextjs-app.md is a recipe that
+  # points at Next.js's own `create-next-app`, so it never drifts from
+  # upstream. See that file before building a real template folder here.
   - new-nextjs-app
 
 reference_code: []        # TODO: 1-2 exemplary repos or modules

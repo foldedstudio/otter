@@ -1,0 +1,16 @@
+{
+  "name": "@otter/sync-cli",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Merges Otter's organisation, stack, repo and developer layers and writes the files each agent tool expects.",
+  "type": "module",
+  "bin": {
+    "otter-sync": "bin/otter-sync.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "yaml": "^2.5.0"
+  }
+}

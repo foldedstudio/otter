@@ -1,0 +1,37 @@
+# Example CI job for a product repo pinned to Otter (see ../../otter.harness.yaml,
+# ci.product_repo_pr: generated-files-in-sync). Copy into the product repo's own
+# .github/workflows/ and adjust the otter ref to match its otter.yaml pin.
+#
+# Fails the PR if AGENTS.md, CLAUDE.md, or .claude/ don't match a fresh sync —
+# i.e. someone hand-edited generated output instead of editing the layer it
+# came from.
+
+name: otter-drift-check
+
+on: pull_request
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Checkout otter at the pinned version
+        uses: actions/checkout@v4
+        with:
+          repository: foldedstudio/otter
+          ref: v0.1.0 # keep in sync with this repo's otter.yaml `otter:` field
+          path: .otter-harness
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - run: npm install --no-audit --no-fund
+        working-directory: .otter-harness/sync-cli
+
+      - run: |
+          node .otter-harness/sync-cli/bin/otter-sync.js check \
+            --repo "$GITHUB_WORKSPACE" \
+            --harness .otter-harness

@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)"
+    ],
+    "ask": [
+      "Bash(npm install*)",
+      "Bash(npm ci*)",
+      "Edit(.github/workflows/**)",
+      "Write(.github/workflows/**)",
+      "Edit(generated/**)",
+      "Write(generated/**)",
+      "Edit(.env***)",
+      "Write(.env***)"
+    ]
+  },
+  "otter": {
+    "guardrails": {
+      "deny": [
+        "production-credentials",
+        "destructive-commands",
+        "unapproved-network-access"
+      ],
+      "require_approval": [
+        "dependency-installs",
+        "changes-to-ci-config",
+        "changes-to-protected-paths"
+      ],
+      "protected_paths": [
+        "generated/",
+        ".env*"
+      ],
+      "tools_allowlist": [
+        "claude-code",
+        "codex"
+      ],
+      "mcp_servers_allowlist": []
+    }
+  }
+}

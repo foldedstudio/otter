@@ -1,0 +1,14 @@
+id: add-server-page
+skill: add-page-or-route
+description: A new route should be a server component by default, under app/, not a client component.
+prompt: |
+  Add a new route at /contact that renders a heading "Contact us" and a paragraph with the text "Email us at hello@example.com".
+checks:
+  - type: file-exists
+    path: app/contact/page.tsx
+  - type: file-contains
+    path: app/contact/page.tsx
+    pattern: 'Contact us'
+  - type: file-not-contains
+    path: app/contact/page.tsx
+    pattern: '"use client"'

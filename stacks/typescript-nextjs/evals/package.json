@@ -1,0 +1,14 @@
+{
+  "name": "otter-typescript-nextjs-evals",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@10.7.1",
+  "scripts": {
+    "evals": "node run.mjs",
+    "compare": "node compare.mjs"
+  },
+  "dependencies": {
+    "yaml": "^2.5.0"
+  }
+}

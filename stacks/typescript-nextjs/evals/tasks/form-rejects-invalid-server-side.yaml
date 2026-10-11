@@ -1,0 +1,11 @@
+id: form-rejects-invalid-server-side
+skill: add-form-with-validation
+description: Server-side validation must reject invalid input even if a client somehow bypassed client-side checks, not rely on the client alone.
+prompt: |
+  Add a feedback form at /feedback with a required "message" field (minimum 10 characters). Make sure a submission with a too-short or missing message is rejected by the server itself, not only blocked by the browser.
+checks:
+  - type: file-exists
+    path: app/feedback/page.tsx
+  - type: file-not-contains
+    path: app/feedback/page.tsx
+    pattern: 'use client.*\n(?!.*validate)'

@@ -1,0 +1,9 @@
+id: reuse-existing-format-util
+skill: add-ui-component
+description: The agent should notice and reuse the existing lib/format.ts helper instead of writing a new ad-hoc name-formatting function.
+prompt: |
+  Add a UserGreeting component that takes a first name and last name and displays "Welcome, {full name}". Use it on the home page with the values "Ada" and "Lovelace".
+checks:
+  - type: file-contains
+    path: components/UserGreeting.tsx
+    pattern: 'formatDisplayName'

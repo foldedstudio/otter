@@ -1,0 +1,39 @@
+# Example CI job for a product repo pinned to Otter (see ../../docs/otter.harness.yaml,
+# ci.product_repo_pr: generated-files-in-sync). Copy into the product repo's own
+# .github/workflows/ and adjust the otter ref to match its otter.yaml pin.
+#
+# Fails the PR if AGENTS.md, CLAUDE.md, or .claude/ don't match a fresh sync —
+# i.e. someone hand-edited generated output instead of editing the layer it
+# came from — or if the repo is missing the stack's required tooling (for
+# typescript-nextjs: a .mise.toml, a pnpm-lock.yaml, and a packageManager
+# field pinning pnpm — see stacks/typescript-nextjs/conventions/package-manager.md).
+
+name: otter-drift-check
+
+on: pull_request
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Checkout otter at the pinned version
+        uses: actions/checkout@v4
+        with:
+          repository: foldedstudio/otter
+          ref: v0.1.0 # keep in sync with this repo's otter.yaml `otter:` field
+          path: .otter-harness
+
+      # Reads *this* repo's own .mise.toml — the stack requires one, so this
+      # also doubles as a smoke test that it's present and valid.
+      - uses: jdx/mise-action@v5
+
+      - run: pnpm install --frozen-lockfile
+        working-directory: .otter-harness/sync-cli
+
+      - run: |
+          node .otter-harness/sync-cli/bin/otter-sync.js check \
+            --repo "$GITHUB_WORKSPACE" \
+            --harness .otter-harness

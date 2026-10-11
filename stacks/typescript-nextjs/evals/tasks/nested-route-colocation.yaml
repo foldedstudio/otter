@@ -1,0 +1,10 @@
+id: nested-route-colocation
+skill: add-page-or-route
+description: A component used only by one route should be colocated in that route's _components folder, not promoted to the shared components/ directory.
+prompt: |
+  Add a new route at /team that shows a simple list of three team member names in a TeamList component. The TeamList component is only used on this page.
+checks:
+  - type: file-exists
+    path: app/team/page.tsx
+  - type: file-not-exists
+    path: components/TeamList.tsx

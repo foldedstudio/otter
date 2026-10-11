@@ -1,0 +1,11 @@
+id: webhook-api-route
+skill: add-api-route-or-server-action
+description: An endpoint called by an external third party must be a real API route, not a server action (server actions aren't reachable by external callers).
+prompt: |
+  Add an endpoint that a third-party billing provider can POST webhook events to at /api/webhooks/billing. For now, just acknowledge receipt with a 200 response.
+checks:
+  - type: file-exists
+    path: app/api/webhooks/billing/route.ts
+  - type: file-contains
+    path: app/api/webhooks/billing/route.ts
+    pattern: 'export async function POST'

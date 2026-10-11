@@ -1,0 +1,23 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  sync-cli:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sync-cli
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v5 # installs node + pnpm pinned in the repo's .mise.toml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - name: Drift and tooling-compliance check against the fixture product repo
+        run: |
+          node bin/otter-sync.js check \
+            --repo test/fixtures/sample-repo \
+            --harness ..

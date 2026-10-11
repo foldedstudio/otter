@@ -12,6 +12,8 @@ We will build Otter, one harness that Claude Code and Codex run inside, assemble
 
 Guardrails flow down and cannot be loosened; guidance flows up and the most specific layer wins. Sized for a team of under five working part-time, the harness runs on two pilot repos by week 4 and on every active TypeScript/Next.js repo by week 6. Success is judged on quality: AI-assisted PRs merged without major rework.
 
+Rollout is phased — see `phases/` for each phase's weeks, deliverables and gate, starting with `phases/phase-0-decide.md` for the decisions already agreed.
+
 ## Design principles
 
 1. **Guardrails versus guidance.** Every rule is tagged as one or the other. Guardrails (no secrets in prompts, no production credentials, approved tools only) are enforced by tooling. Guidance (style, patterns, preferences) is advice the agent reads.
@@ -127,20 +129,6 @@ The harness is trusted only because every change to it, and every change made th
 - A 20-minute item every fortnight in an existing team meeting covers eval results, rework on AI-assisted PRs, and any incidents.
 - Any agent-caused incident gets a short write-up and, where possible, a new guardrail or eval task so it cannot recur silently.
 
-## Rollout plan
-
-With fewer than five developers we can move fast: the harness lead builds, everyone pilots, and the whole rollout fits in six weeks of part-time work.
-
-| Phase | Weeks | Deliverables | Gate to pass |
-| --- | --- | --- | --- |
-| 0 · Decide | 1 | Confirm every developer's subscription has no-training terms; pick two TypeScript/Next.js pilot repos; baseline rework rate and change failure rate from recent PRs | A: subscriptions checked; baselines recorded |
-| 1 · Build | 1–3 | otter repo with `org/` and `stacks/typescript-nextjs/`; sync CLI writing Claude Code files and AGENTS.md; 10–15 eval tasks running headless through Claude Code in CI | B: sync output passes CI on both pilots; eval suite runs green |
-| 2 · Pilot | 3–4 | Both pilot repos on Otter for daily work; CI reviewer agent commenting on every pilot PR; fix gaps in the stack pack as they come up | C: rework on AI-assisted PRs at or below baseline |
-| 3 · Roll out | 5–6 | All active TypeScript/Next.js repos pinned to Otter; repo template and automated pin-upgrade PRs; decide whether a model gateway is worth adding | D: every active repo pinned; no guardrail breach has reached main |
-| 4 · Operate | 7+ | Fortnightly review in an existing team meeting; every incident and repeated review comment becomes an eval task; add a stack when a repo on another language needs it | — |
-
-Phase 2 is the critical one: it shows whether the harness reduces rework on our own code. If Gate C fails, we fix the stack pack and extend the pilot rather than rolling out.
-
 ## Roles and ownership
 
 | Role | Who | Owns |
@@ -150,7 +138,7 @@ Phase 2 is the critical one: it shows whether the harness reduces rework on our 
 | Repo lead | The lead developer on each repo | That repo's local layer and keeping its pin current |
 | Each developer | Everyone | Personal settings, a subscription with no-training terms, reporting gaps and bad agent behaviour |
 
-## Risks, metrics and decisions
+## Risks and metrics
 
 **Risks**
 
@@ -170,27 +158,3 @@ Phase 2 is the critical one: it shows whether the harness reduces rework on our 
 - Eval task success on each harness release.
 - Share of active repos pinned to a current harness version.
 - Guardrail violations caught, and any that reached main.
-
-**Decisions (agreed 11 October 2026)**
-
-| Decision | Choice | What it changes |
-| --- | --- | --- |
-| Tools at launch | Claude Code; Codex and other CLI agents | Two adapters: Claude Code files and a shared AGENTS.md. No Cursor or Copilot output. |
-| Eval reference tool | Claude Code | Eval suites run headless in CI through Claude Code. |
-| Agent autonomy | Interactive, plus CI reviewers | CI agents comment on PRs with read-only access; no unattended PRs. |
-| Repo layout | Many repos | One `otter.yaml` per repo; automated PRs keep pins current. |
-| First stack | TypeScript with Next.js | The first stack pack is `typescript-nextjs`. |
-| Sync tooling | Thin CLI on open formats | Author in AGENTS.md and skill conventions; a small script merges layers and checks drift. |
-| Model gateway | Phase 3 | Phase 1 relies on each provider's admin console for logging. |
-| Harness hosting | One harness monorepo, otter | `org/` and `stacks/<name>/` folders in one repo, with CODEOWNERS per folder. |
-| Cost | Developers' own subscriptions | No central budget; cost tracking is limited to what each subscription reports. |
-| Compliance | Standard commercial terms | Any approved provider with no-training terms. |
-| Staffing | Part-time working group | Org layer built alongside normal work. |
-| Success measure | Quality | AI-assisted PRs merged without major rework; change failure rate flat or better. |
-| Scale | Under 5 developers, growing number of repos | Plan sized to match: six-week rollout, one harness lead (Anthony). |
-
-**Follow-ups**
-
-- [ ] Confirm each developer's subscription carries no-training commercial terms; individual plans can differ from team or business plans.
-- [x] Name the harness lead: Anthony Crowcroft.
-- [x] Right-size the rollout and governance for a team of under 5.

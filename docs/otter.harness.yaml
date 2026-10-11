@@ -43,7 +43,9 @@ org:
       scanning: [pre-commit, ci]
     tools:
       allowlist: [claude-code, codex]
-      mcp_servers: []              # TODO: add approved servers with pinned versions
+      mcp_servers:                 # pinned; source of truth is org/org.yaml
+        - { name: github, source: ghcr.io/github/github-mcp-server, version: v2.0.2 }
+        - { name: playwright, source: "@playwright/mcp", version: 0.0.83 }
     permissions:
       deny:
         - production-credentials
@@ -54,8 +56,8 @@ org:
         - changes-to-ci-config
         - changes-to-protected-paths
       codex:
-        sandbox: workspace-write   # TODO: confirm against current Codex config
-        approval: on-request
+        sandbox: workspace-write   # config.toml sandbox_mode
+        approval: on-request       # config.toml approval_policy
     ci_reviewer:
       access: read-only            # comment on PRs; never push, approve or merge
 
@@ -63,7 +65,7 @@ org:
     principles:
       - Conventional commits; small PRs with a clear description
       - Every change ships with tests or a reason why not
-      - Respect the licence policy; no copyleft deps without approval   # TODO: confirm
+      - Respect the licence policy; no copyleft deps without approval
     skills:
       - write-adr
       - open-pr
@@ -80,15 +82,22 @@ org:
 stacks:
   typescript-nextjs:
     path: stacks/typescript-nextjs/
-    owner: TODO                    # developer who knows the stack best
+    owner: anthony                 # developer who knows the stack best
     status: pilot
-    commands:                      # TODO: confirm package manager and scripts
-      install: npm ci
-      build: npm run build
-      lint: npm run lint
-      typecheck: npx tsc --noEmit
-      test: npm test
-    conventions:                   # TODO: fill in each file under conventions/
+    commands:
+      install: pnpm install --frozen-lockfile
+      build: pnpm run build
+      lint: pnpm run lint
+      typecheck: pnpm run typecheck
+      test: pnpm test
+    tooling:                       # enforced by otter-sync check, not just advisory
+      version_manager: mise
+      version_manager_config: .mise.toml
+      package_manager: pnpm
+      lockfile: pnpm-lock.yaml
+      forbidden_lockfiles: [package-lock.json, yarn.lock]
+    conventions:                   # one short file each under conventions/
+      - package-manager
       - router-choice
       - server-vs-client-components
       - folder-layout
@@ -96,17 +105,20 @@ stacks:
       - error-handling-and-logging
     libraries:
       preferred: []                # TODO
-      banned: []                   # each entry: { name, reason }
+      banned:                      # each entry: { name, reason }; enforced by otter-sync check
+        - { name: moment, reason: "In maintenance mode; use date-fns or native Intl/Temporal" }
+        - { name: lodash, reason: "Mostly redundant with modern JS" }
     skills:
       - add-page-or-route
       - add-api-route-or-server-action
       - add-form-with-validation
       - add-ui-component
-    templates:
-      - new-nextjs-app
+    templates:                     # recipes pointing at each framework's own
+      - new-nextjs-app              # official scaffold (create-next-app), not an in-repo app we maintain
     reference_code: []             # TODO: 1–2 exemplary repos or modules
     guardrails:
       protected_paths: [generated/, .env*]
+      deny: [non-pnpm-package-manager]
     evals:
       path: stacks/typescript-nextjs/evals/
       target_tasks: 15             # 10–15 tasks with known-good outcomes

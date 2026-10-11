@@ -1,0 +1,6 @@
+# Manifest so the eval runner can sync the harness under test into each
+# task's copy of this app before the agent runs — evals measure Otter's
+# layers, not a bare Claude Code session.
+otter: eval
+stack: typescript-nextjs
+tools: [claude-code]

@@ -1,0 +1,12 @@
+id: lint-and-typecheck-pass
+skill: add-page-or-route
+description: Whatever the agent adds, the stack's own lint and typecheck commands must still pass — this task is deliberately generic to catch regressions the structural checks above would miss.
+prompt: |
+  Add a route at /status that displays the text "All systems operational".
+checks:
+  - type: file-exists
+    path: app/status/page.tsx
+  - type: command
+    run: pnpm run lint
+  - type: command
+    run: pnpm run typecheck

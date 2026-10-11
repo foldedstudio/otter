@@ -2,19 +2,15 @@
 
 Otter is a three-layer AI development harness that Claude Code and Codex run inside: **organisation** (`org/`), **stack** (`stacks/<name>/`), and **local** (per product repo). This repo is the harness itself — the source that a sync CLI will merge and write out as each product repo's `AGENTS.md` and Claude Code files.
 
-Full plan: `plans/otter-plan.md` (narrative) and `plans/otter.harness.yaml` (the plan as config — treat this as the spec). Start with `plans/README.md`.
+Full plan: `docs/otter-plan.md` (narrative) and `docs/otter.harness.yaml` (the plan as config — treat this as the spec). Rollout phases, gates, and the agreed decisions log live in `docs/phases/`. Start with `docs/README.md`.
 
 ## Current state
 
-Phase 1 (Build), pre-code. Only `plans/` exists so far. Still to scaffold, per `otter.harness.yaml`:
+Phase 1 (Build), in progress. `org/`, `stacks/typescript-nextjs/`, and the sync CLI (`sync-cli/`) are scaffolded, with a drift check running in CI. The `new-nextjs-app` "template" is a recipe pointing at Next.js's own `create-next-app`, not an app we maintain in-repo. Still open, per `otter.harness.yaml`: the stack pack's preferred libraries and reference code (deliberately deferred), and an `ANTHROPIC_API_KEY` secret so the eval gate in CI actually runs.
 
-- `org/` — guardrails, permission defaults, shared skills, `org/AGENTS.md` (capped at 150 lines)
-- `stacks/typescript-nextjs/` — commands, conventions, approved libraries, skills, templates, evals
-- The sync CLI — reads a product repo's `otter.yaml`, merges org → stack → repo → developer by precedence, writes `AGENTS.md` and the Claude Code files
-- A drift check so CI fails when committed agent files differ from a fresh sync
-- The first 10–15 eval tasks, run headless through Claude Code in CI
+## Tooling
 
-There is no build, lint, or test command yet — don't invent one. Check `package.json`/`otter.harness.yaml` before assuming tooling exists.
+This repo (and every repo on the `typescript-nextjs` stack) uses **mise** to pin Node and **pnpm** as the package manager — never `npm`/`npx`/`yarn`. Run `mise install` once per machine, then work from `sync-cli/` or `stacks/typescript-nextjs/evals/` with `pnpm install` / `pnpm test`, each of which has its own `package.json`. There's no root-level build — don't invent one.
 
 ## Working in this repo
 

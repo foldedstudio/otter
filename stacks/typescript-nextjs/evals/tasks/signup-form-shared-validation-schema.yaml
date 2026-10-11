@@ -1,0 +1,10 @@
+id: signup-form-shared-validation-schema
+skill: add-form-with-validation
+description: Client and server validation for a form must share one schema (e.g. Zod) rather than duplicating the rules.
+prompt: |
+  Add a signup form at /signup with a name field (required, min 2 characters) and an email field (required, valid email format). Validate on the client for responsiveness, and re-validate on the server before accepting the submission.
+checks:
+  - type: file-exists
+    path: app/signup/page.tsx
+  - type: command
+    run: grep -rl "z.object" app/ lib/ 2>/dev/null | head -1

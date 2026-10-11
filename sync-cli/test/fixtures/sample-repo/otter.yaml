@@ -1,0 +1,6 @@
+otter: v0.1.0
+stack: typescript-nextjs
+local:
+  instructions: docs/agent/
+  protected_paths: [generated/, .env*]
+tools: [claude-code, codex]
